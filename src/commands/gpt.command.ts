@@ -1,4 +1,5 @@
 import { CommandRunner, Command, InquirerService } from 'nest-commander';
+import { OpenaiService } from 'src/openai/openai.service';
 
 @Command({
   name: 'gpt',
@@ -8,7 +9,10 @@ import { CommandRunner, Command, InquirerService } from 'nest-commander';
   },
 })
 export class GPTCommand extends CommandRunner {
-  constructor(private readonly inquire: InquirerService) {
+  constructor(
+    private readonly inquire: InquirerService,
+    private readonly openaiService: OpenaiService,
+  ) {
     super();
   }
 
@@ -20,6 +24,10 @@ export class GPTCommand extends CommandRunner {
       'text-question',
       undefined,
     );
-    console.log('its kinda working!');
+    const aiResp = await this.openaiService.generateResponse([
+      { role: 'user', content: res.text },
+    ]);
+
+    console.log(aiResp);
   }
 }
